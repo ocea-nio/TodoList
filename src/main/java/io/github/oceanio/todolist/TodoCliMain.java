@@ -3,7 +3,7 @@ package io.github.oceanio.todolist;
 import java.util.*;
 
 public class TodoCliMain {
-    public void todomain(String appName){
+    public void todoMain(String appName){
         //必須instance
         Map<String, TaskData> taskMap = new HashMap<>();
         Scanner scanner = new Scanner(System.in);
@@ -34,7 +34,7 @@ public class TodoCliMain {
                     if(Objects.equals(taskName,"cancel")){
                         continue;
                     }
-                    System.out.println("タスク内容を入力");
+                    System.out.println("タスク内容を入力:");
                     TaskData taskData = new TaskData(UUID.randomUUID(),scanner.nextLine());
                     taskMap.put(taskName, taskData);
                     System.out.println("完了しました");
@@ -45,12 +45,25 @@ public class TodoCliMain {
                     String taskName = scanner.nextLine();
                     if(!(taskMap.containsKey(taskName))){
                         System.out.println("一致するものが見つかりませんでした");
+                        List<String> results = searchSimilar(taskName,taskMap.keySet());
+                        if (results.isEmpty()){return;}
                         System.out.println("類似するもの:");
-                        for (String key: taskMap.keySet()){
-                            //searchResultを使用予定
+                        for (String result: results){
+                            System.out.println("││");
+                            System.out.println("│├" + result);
                         }
-                    }
-
+                        System.out.println("指定するものを入力してください：(cancelで中止)");
+                        String secondSearch = scanner.nextLine();
+                        if (secondSearch.equals("cancel") || !(taskMap.containsKey(secondSearch))){
+                            System.out.println("指定されたタスクが見つからなかった，またはキャンセルされました");
+                            continue ;
+                        }
+                        System.out.println("一致するものが見つかりました");
+                        TaskData matchContents =  taskMap.get(secondSearch);
+                        System.out.println("タスク内容: " + matchContents.getContents() + " ,進捗状況: " + matchContents.getCondition().toString());
+                    }else System.out.println("一致するものが見つかりました");
+                    TaskData matchContents =  taskMap.get(taskName);
+                    System.out.println("タスク内容: " + matchContents.getContents() + " ,進捗状況: " + matchContents.getCondition().toString());
                 }
                 case "shatDown"-> {
                     System.out.println("終了します");
@@ -59,7 +72,15 @@ public class TodoCliMain {
             }
         }
     }
-    private void searchResult(){
-        //正規表現を使うのがmust?
+    private List<String> searchSimilar(String searchTask, Set<String> keyList){
+        List<String> result = new ArrayList<>();
+        for (String key: keyList){
+            if (searchTask.isEmpty() || key.isEmpty()) { continue; }
+            if (searchTask.contains(key) || key.contains(searchTask)){
+                System.out.println("add search");
+                result.add(key);
+            }
+        }
+        return result;
     }
 }
