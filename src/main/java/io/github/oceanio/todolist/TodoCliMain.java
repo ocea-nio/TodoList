@@ -18,13 +18,12 @@ public class TodoCliMain {
 
         mainLoop: while (true){
             System.out.println("使い方:");
-            System.out.println("タスク追加=> task add, タスク検索=> task search, タスク完了=> task complete {taskName}");
+            System.out.println(
+                    "タスク追加=> task add, タスク検索=> task search, タスク完了=> task complete {taskName}, 終了=> task shatDown,\n" +
+                    "一覧検索=> task list"
+            );
             String command = scanner.next();
-            String commandDefault = "task";
-            if (!Objects.equals(command, commandDefault)){
-                System.out.println("違う");
-                return;
-            }
+            if (!command.equals("task")){return;}
             String action = scanner.next();
             switch (action) {
                 case "add" -> {
@@ -46,7 +45,7 @@ public class TodoCliMain {
                     if(!(taskMap.containsKey(taskName))){
                         System.out.println("一致するものが見つかりませんでした");
                         List<String> results = searchSimilar(taskName,taskMap.keySet());
-                        if (results.isEmpty()){return;}
+                        if (results.isEmpty()){continue;}
                         System.out.println("類似するもの:");
                         for (String result: results){
                             System.out.println("││");
@@ -65,9 +64,25 @@ public class TodoCliMain {
                     TaskData matchContents =  taskMap.get(taskName);
                     System.out.println("タスク内容: " + matchContents.getContents() + " ,進捗状況: " + matchContents.getCondition().toString());
                 }
+                case "complete"-> {
+                    System.out.println("完了したタスク名を入力");
+                    scanner.nextLine();
+                    String complete = scanner.nextLine();
+                    if (!taskMap.containsKey(complete)){
+                        System.out.println("タスクが見つかりませんでした");
+                        continue ;
+                    }
+                    taskMap.get(complete).setCondition(TaskData.TaskCondition.COMPLETE);
+                    System.out.println(complete + "を完了しました");
+                }
                 case "shatDown"-> {
                     System.out.println("終了します");
                     break mainLoop;
+                }
+                case "list"-> {
+                    System.out.println("リスト対象を選択(all,complete,progress,stop)");
+                    String listMod = scanner.next();
+                    listAction(listMod, taskMap);
                 }
             }
         }
@@ -82,5 +97,26 @@ public class TodoCliMain {
             }
         }
         return result;
+    }
+    private void listAction(String modifier, Map<String,TaskData> taskMap){
+        switch(modifier) {
+            case "all"->{
+                for (String key : taskMap.keySet()){
+                    System.out.println("││");
+                    System.out.println("│├" + key);
+                }
+            }
+            case "progress"->
+                    taskMap.values().stream().filter(progress -> progress.getCondition() == TaskData.TaskCondition.PROGRESS).forEach(taskContent -> System.out.println(
+                            "││\n" + "│├" + taskContent
+                            ));
+            case "complete"-> taskMap.values().stream().filter(progress -> progress.getCondition() == TaskData.TaskCondition.COMPLETE).forEach(taskContent -> System.out.println(
+                    "││\n" + "│├" + taskContent
+            ));
+            case "stop"-> taskMap.values().stream().filter(progress -> progress.getCondition() == TaskData.TaskCondition.STOP).forEach(taskContent -> System.out.println(
+                    "││\n" + "│├" + taskContent
+            ));
+
+        }
     }
 }
