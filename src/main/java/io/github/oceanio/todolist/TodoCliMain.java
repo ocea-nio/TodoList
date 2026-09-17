@@ -2,8 +2,16 @@ package io.github.oceanio.todolist;
 
 import java.util.*;
 
+import javax.swing.text.TabSet;
+
 public class TodoCliMain {
-    public void todoMain(String appName){
+    private final String appName;
+    private final TaskLoader loader;
+    public TodoCliMain(String appName,TaskLoader loader){
+        this.appName = appName;
+        this.loader = loader;
+    }
+    public void todoMain(){
         //必須instance
         Map<String, TaskData> taskMap = new HashMap<>();
         Scanner scanner = new Scanner(System.in);

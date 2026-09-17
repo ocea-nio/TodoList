@@ -29,9 +29,10 @@ public class TaskLoader {
                 "CREATE TABLE " + tablename +
                 """
                 (
-                id UUID,
-                description STRING,
-                condition.TaskCondition
+                name TEXT,
+                uuid TEXT,
+                descript TEXT,
+                condition TEXT
                 )
                 """);
             this.c.commit();
