@@ -23,19 +23,21 @@ public class TaskLoader {
         }
     }
 
-    public void createTable(String tablename){
+    public void createTable(String tablename,TaskData data){
+        if (data == null) {
+            return; 
+        }
         try{
-            this.stmt.executeQuery(
-                "CREATE TABLE " + tablename +
-                """
-                (
+            stmt.executeQuery("CREATE TABLE " + tablename +"""
+            (
                 name TEXT,
                 uuid TEXT,
-                descript TEXT,
+                description TEXT,
                 condition TEXT
-                )
-                """);
-            this.c.commit();
+            )
+            """);
+            
+            c.commit();
         }catch (SQLException e){
            System.out.println("------------------------------------------------");
            System.out.println(tablename+ " already exists.");
@@ -58,26 +60,22 @@ public void readTable(String tablename){
         }
     }
 
-    public void insertData(String tablename,int id, int value, String description){
+    public void insertData(String tablename,String name,TaskData data){
+        
         try{
-            this.stmt.executeUpdate(
+            stmt.executeUpdate(
                 "INSERT INTO " + tablename +
                 """
                 (
-                \"id\",
-                \"value\",
-                \"description\"
+                \"name\",
+                \"uuid\",
+                \"description\",
+                 \"condition\"
                 )
                 """ 
                 + 
-                "VALUES(" 
-                + id + ","
-                + value + ","
-                + "\"" +  description + "\")"
-                );
-                
-            System.out.println("id"  + "->" + id + ", value"  + "->" + value +  ", description"  + "->" + description + " for " + tablename );
-            
+                "VALUES(" + name + ","+ data.getUUID().toString() + "," +  data.getContents() + ","+ "\"" + data.getCondition().toString() + "\")"
+            );
         }catch (SQLException e){
           System.out.println(e);
         }
