@@ -50,27 +50,29 @@ public class TodoCliMain {
                     System.out.println("検索するタスク名を入力:");
                     scanner.nextLine(); //改行が残ってそれが反応するため
                     String taskName = scanner.nextLine();
+                    TaskData matchContents = null;
                     if(!(contains(taskList,taskName))){
                         System.out.println("一致するものが見つかりませんでした");
                         List<String> results = searchSimilar(taskName, taskList);
+
                         if (results.isEmpty()){continue;}
                         System.out.println("類似するもの:");
                         for (String result: results){
                             System.out.println("││");
                             System.out.println("│├" + result);
                         }
+
                         System.out.println("指定するものを入力してください：(cancelで中止)");
                         String secondSearch = scanner.nextLine();
+
                         if (secondSearch.equals("cancel") || !(contains(taskList,secondSearch))){
                             System.out.println("指定されたタスクが見つからなかった，またはキャンセルされました");
                             continue ;
                         }
-                        System.out.println("一致するものが見つかりました");
-                        TaskData matchContents =  taskList.get(secondSearch);
-                        System.out.println("タスク内容: " + matchContents.getContents() + " ,進捗状況: " + matchContents.getCondition().toString());
-                    }else System.out.println("一致するものが見つかりました");
-                    TaskData matchContents =  taskList.get(taskName);
-                    System.out.println("タスク内容: " + matchContents.getContents() + " ,進捗状況: " + matchContents.getCondition().toString());
+                        matchContents = findTask(taskList,secondSearch);
+                    }else matchContents =  findTask(taskList,taskName);
+                    if (matchContents == null){continue ;}
+                    matchContentView(matchContents);
                 }
                 case "complete"-> {
                     System.out.println("完了したタスク名を入力");
@@ -106,6 +108,11 @@ public class TodoCliMain {
             }
         }
         return result;
+    }
+
+    private void matchContentView(TaskData matchContents){
+        System.out.println("一致するものが見つかりました");
+        System.out.println("タスク内容: " + matchContents.getContents() + " ,進捗状況: " + matchContents.getCondition().toString());
     }
 
     private boolean contains(List<TaskData> taskDataList,String key){
