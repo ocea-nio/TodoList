@@ -47,9 +47,9 @@ public void readTable(String tablename){
         try{
             ResultSet rs = stmt.executeQuery("SELECT * FROM " + tablename);
             while (rs.next()) {
-                UUID id = rs.getInt("id"); // get data of id col.
+                String id = rs.getString("id"); // get data of id col.
                 String value = rs.getString("value"); // get data of value col.
-                TaskCondition condition = rs.getString("condition");// get data of description col.
+                String condition = rs.getString("condition");// get data of description col.
                 System.out.println(id + "," + value + ","+ description); // print out the data.
             }
             rs.close();

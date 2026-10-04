@@ -1,9 +1,11 @@
 package io.github.oceanio.todolist;
 
+import java.util.Objects;
 import java.util.UUID;
 
 public class TaskData {
     private final UUID taskUUID;
+    private final String taskName;
     private final String taskContents;
     private TaskCondition condition;
     public enum TaskCondition{
@@ -12,20 +14,25 @@ public class TaskData {
         STOP
     }
 
-    public TaskData(UUID taskUUID, String taskContents, TaskCondition condition) {
+    public TaskData(UUID taskUUID,String taskName, String taskContents, TaskCondition condition) {
+        this.taskName = taskName;
         this.taskUUID = taskUUID;
         this.taskContents = taskContents;
         this.condition = condition;
 
     }
-    public TaskData(UUID taskUUID, String taskContents) {
+    public TaskData(UUID taskUUID, String taskName, String taskContents) {
         this.taskUUID = taskUUID;
+        this.taskName = taskName;
         this.taskContents = taskContents;
         this.condition = TaskCondition.PROGRESS;
     }
 
     public UUID getUUID(){
         return taskUUID;
+    }
+    public String getTaskName(){
+        return taskName;
     }
     public String getContents(){
         return  taskContents;
@@ -35,5 +42,8 @@ public class TaskData {
     }
     public void setCondition(TaskCondition c){
         condition = c;
+    }
+    public boolean hasTaskName(String name){
+        return Objects.equals(name, taskName);
     }
 }

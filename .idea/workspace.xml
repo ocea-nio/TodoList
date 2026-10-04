@@ -4,9 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d253386f-796f-4093-a915-202744364092" name="変更" comment="add search">
-      <change afterPath="$PROJECT_DIR$/src/main/java/io/github/oceanio/todolist/TaskLoader.java" afterDir="false" />
+    <list default="true" id="d253386f-796f-4093-a915-202744364092" name="変更" comment="Complete to add feature">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/io/github/oceanio/todolist/TaskData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/github/oceanio/todolist/TaskData.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/io/github/oceanio/todolist/TaskLoader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/github/oceanio/todolist/TaskLoader.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/io/github/oceanio/todolist/TodoCliMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/github/oceanio/todolist/TodoCliMain.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -43,7 +44,8 @@
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;
   }
 }</component>
   <component name="RunManager">
@@ -90,13 +92,22 @@
       <option name="project" value="LOCAL" />
       <updated>1789128170446</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Complete to add feature">
+      <option name="closed" value="true" />
+      <created>1789276800215</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1789276800215</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="init" />
     <MESSAGE value="add TaskData" />
     <MESSAGE value="add search" />
-    <option name="LAST_COMMIT_MESSAGE" value="add search" />
+    <MESSAGE value="Complete to add feature" />
+    <option name="LAST_COMMIT_MESSAGE" value="Complete to add feature" />
   </component>
 </project>
