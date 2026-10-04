@@ -11,7 +11,7 @@ public class TodoCliMain {
     }
     public void todoMain(){
         //必須instance
-        List<TaskData> taskList = new ArrayList<>();
+        List<TaskData> taskList = loader.readTable(appName);
         Scanner scanner = new Scanner(System.in);
 
 
@@ -50,7 +50,7 @@ public class TodoCliMain {
                     System.out.println("検索するタスク名を入力:");
                     scanner.nextLine(); //改行が残ってそれが反応するため
                     String taskName = scanner.nextLine();
-                    TaskData matchContents = null;
+                    TaskData matchContents;
                     if(!(contains(taskList,taskName))){
                         System.out.println("一致するものが見つかりませんでした");
                         List<String> results = searchSimilar(taskName, taskList);
@@ -82,8 +82,12 @@ public class TodoCliMain {
                         System.out.println("タスクが見つかりませんでした");
                         continue ;
                     }
-                    findTask(taskList,complete).setCondition(TaskData.TaskCondition.COMPLETE);
-                    System.out.println(complete + "を完了しました");
+                    try {
+                        findTask(taskList,complete).setCondition(TaskData.TaskCondition.COMPLETE);
+                        System.out.println(complete + "を完了しました");
+                    }catch (NullPointerException e){
+                        System.out.println(e);
+                    }
                 }
                 case "shutDown"-> {
                     System.out.println("終了します");
