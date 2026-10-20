@@ -13,7 +13,7 @@ public class TodoCliMain {
     }
     public void todoMain(){
         //必須instance
-        Map<String, TaskData> taskMap = new HashMap<>();
+        Map<String, TaskData> taskMap = loader.readTable(appName);;
         Scanner scanner = new Scanner(System.in);
 
 

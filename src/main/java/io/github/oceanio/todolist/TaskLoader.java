@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Map;
 import java.util.UUID;
 
 public class TaskLoader {
@@ -23,19 +24,21 @@ public class TaskLoader {
         }
     }
 
-    public void createTable(String tablename){
+    public void createTable(String tablename,TaskData data){
+        if (data == null) {
+            return; 
+        }
         try{
-            this.stmt.executeQuery(
-                "CREATE TABLE " + tablename +
-                """
-                (
+            stmt.executeQuery("CREATE TABLE " + tablename +"""
+            (
                 name TEXT,
                 uuid TEXT,
-                descript TEXT,
+                description TEXT,
                 condition TEXT
-                )
-                """);
-            this.c.commit();
+            )
+            """);
+            
+            c.commit();
         }catch (SQLException e){
            System.out.println("------------------------------------------------");
            System.out.println(tablename+ " already exists.");
@@ -43,41 +46,41 @@ public class TaskLoader {
         }
     }
 
-public void readTable(String tablename){
+public Map<String,TaskData> readTable(String tablename){
+    Map<String,TaskData> results;
         try{
             ResultSet rs = stmt.executeQuery("SELECT * FROM " + tablename);
             while (rs.next()) {
-                UUID id = rs.getInt("id"); // get data of id col.
-                String value = rs.getString("value"); // get data of value col.
-                TaskCondition condition = rs.getString("condition");// get data of description col.
-                System.out.println(id + "," + value + ","+ description); // print out the data.
+                String name = rs.getString("name");
+                String uuid = rs.getString("uuid"); // get data of id col.
+                String description = rs.getString("description"); // get data of value col.
+                String condition = rs.getString("condition");// get data of description col.
+                TaskData data = new TaskData(UUID.fromString(uuid),description,)
+                results.put(name, data); // print out the data.
             }
             rs.close();
+            return results;
         }catch (SQLException e){
             e.printStackTrace();
         }
     }
 
-    public void insertData(String tablename,int id, int value, String description){
+    public void insertData(String tablename,String name,TaskData data){
+        
         try{
-            this.stmt.executeUpdate(
+            stmt.executeUpdate(
                 "INSERT INTO " + tablename +
                 """
                 (
-                \"id\",
-                \"value\",
-                \"description\"
+                \"name\",
+                \"uuid\",
+                \"description\",
+                 \"condition\"
                 )
                 """ 
                 + 
-                "VALUES(" 
-                + id + ","
-                + value + ","
-                + "\"" +  description + "\")"
-                );
-                
-            System.out.println("id"  + "->" + id + ", value"  + "->" + value +  ", description"  + "->" + description + " for " + tablename );
-            
+                "VALUES(" + name + ","+ data.getUUID().toString() + "," +  data.getContents() + ","+ "\"" + data.getCondition().toString() + "\")"
+            );
         }catch (SQLException e){
           System.out.println(e);
         }
