@@ -2,6 +2,8 @@ package io.github.oceanio.todolist;
 
 import java.util.*;
 
+import javax.swing.text.TabSet;
+
 public class TodoCliMain {
     private final String appName;
     private final TaskLoader loader;
@@ -11,7 +13,7 @@ public class TodoCliMain {
     }
     public void todoMain(){
         //必須instance
-        List<TaskData> taskList = loader.readTable(appName);
+        Map<String, TaskData> taskMap = loader.readTable(appName);;
         Scanner scanner = new Scanner(System.in);
 
 
@@ -36,74 +38,65 @@ public class TodoCliMain {
                     System.out.println("追加するタスク名を入力(cancelで中止):");
                     scanner.nextLine();
                     String taskName = scanner.nextLine();
-                    if (contains(taskList,taskName)){
-                        System.out.println("同名タスクが存在しています。\n違う名前にしてください。");
+                    if(Objects.equals(taskName,"cancel")){
                         continue;
                     }
-                    if(Objects.equals(taskName,"cancel")){continue;}
                     System.out.println("タスク内容を入力:");
-                    TaskData taskData = new TaskData(UUID.randomUUID(),taskName,scanner.nextLine());
-                    taskList.add(taskData);
+                    TaskData taskData = new TaskData(UUID.randomUUID(),scanner.nextLine());
+                    taskMap.put(taskName, taskData);
                     System.out.println("完了しました");
                 }
                 case "search" -> {
                     System.out.println("検索するタスク名を入力:");
                     scanner.nextLine(); //改行が残ってそれが反応するため
                     String taskName = scanner.nextLine();
-                    TaskData matchContents;
-                    if(!(contains(taskList,taskName))){
+                    if(!(taskMap.containsKey(taskName))){
                         System.out.println("一致するものが見つかりませんでした");
-                        List<String> results = searchSimilar(taskName, taskList);
-
+                        List<String> results = searchSimilar(taskName,taskMap.keySet());
                         if (results.isEmpty()){continue;}
                         System.out.println("類似するもの:");
                         for (String result: results){
                             System.out.println("││");
                             System.out.println("│├" + result);
                         }
-
                         System.out.println("指定するものを入力してください：(cancelで中止)");
                         String secondSearch = scanner.nextLine();
-
-                        if (secondSearch.equals("cancel") || !(contains(taskList,secondSearch))){
+                        if (secondSearch.equals("cancel") || !(taskMap.containsKey(secondSearch))){
                             System.out.println("指定されたタスクが見つからなかった，またはキャンセルされました");
                             continue ;
                         }
-                        matchContents = findTask(taskList,secondSearch);
-                    }else matchContents =  findTask(taskList,taskName);
-                    if (matchContents == null){continue ;}
-                    matchContentView(matchContents);
+                        System.out.println("一致するものが見つかりました");
+                        TaskData matchContents =  taskMap.get(secondSearch);
+                        System.out.println("タスク内容: " + matchContents.getContents() + " ,進捗状況: " + matchContents.getCondition().toString());
+                    }else System.out.println("一致するものが見つかりました");
+                    TaskData matchContents =  taskMap.get(taskName);
+                    System.out.println("タスク内容: " + matchContents.getContents() + " ,進捗状況: " + matchContents.getCondition().toString());
                 }
                 case "complete"-> {
                     System.out.println("完了したタスク名を入力");
                     scanner.nextLine();
                     String complete = scanner.nextLine();
-                    if (!contains(taskList,complete)){
+                    if (!taskMap.containsKey(complete)){
                         System.out.println("タスクが見つかりませんでした");
                         continue ;
                     }
-                    try {
-                        findTask(taskList,complete).setCondition(TaskData.TaskCondition.COMPLETE);
-                        System.out.println(complete + "を完了しました");
-                    }catch (NullPointerException e){
-                        System.out.println(e);
-                    }
+                    taskMap.get(complete).setCondition(TaskData.TaskCondition.COMPLETE);
+                    System.out.println(complete + "を完了しました");
                 }
-                case "shutDown"-> {
+                case "shatDown"-> {
                     System.out.println("終了します");
                     break mainLoop;
                 }
                 case "list"-> {
                     System.out.println("リスト対象を選択(all,complete,progress,stop)");
                     String listMod = scanner.next();
-                    listAction(listMod, taskList);
+                    listAction(listMod, taskMap);
                 }
             }
         }
     }
-    private List<String> searchSimilar(String searchTask, List<TaskData> taskData){
+    private List<String> searchSimilar(String searchTask, Set<String> keyList){
         List<String> result = new ArrayList<>();
-        List<String> keyList = taskData.stream().map(TaskData::getTaskName).toList();
         for (String key: keyList){
             if (searchTask.isEmpty() || key.isEmpty()) { continue; }
             if (searchTask.contains(key) || key.contains(searchTask)){
@@ -113,46 +106,22 @@ public class TodoCliMain {
         }
         return result;
     }
-
-    private void matchContentView(TaskData matchContents){
-        System.out.println("一致するものが見つかりました");
-        System.out.println("タスク内容: " + matchContents.getContents() + " ,進捗状況: " + matchContents.getCondition().toString());
-    }
-
-    private boolean contains(List<TaskData> taskDataList,String key){
-        for (TaskData task : taskDataList) {
-            if (task.hasTaskName(key)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private TaskData findTask(List<TaskData> taskDataList,String searchKey){
-        for (TaskData task : taskDataList) {
-            if (task.hasTaskName(searchKey)) {
-                return task;
-            }
-        }
-        return null;
-    }
-
-    private void listAction(String modifier, List<TaskData> taskDataList){
+    private void listAction(String modifier, Map<String,TaskData> taskMap){
         switch(modifier) {
             case "all"->{
-                for (String key : taskDataList.stream().map(TaskData::getTaskName).toList()){
+                for (String key : taskMap.keySet()){
                     System.out.println("││");
                     System.out.println("│├" + key);
                 }
             }
             case "progress"->
-                    taskDataList.stream().filter(progress -> progress.getCondition() == TaskData.TaskCondition.PROGRESS).forEach(taskContent -> System.out.println(
+                    taskMap.values().stream().filter(progress -> progress.getCondition() == TaskData.TaskCondition.PROGRESS).forEach(taskContent -> System.out.println(
                             "││\n" + "│├" + taskContent
                             ));
-            case "complete"-> taskDataList.stream().filter(progress -> progress.getCondition() == TaskData.TaskCondition.COMPLETE).forEach(taskContent -> System.out.println(
+            case "complete"-> taskMap.values().stream().filter(progress -> progress.getCondition() == TaskData.TaskCondition.COMPLETE).forEach(taskContent -> System.out.println(
                     "││\n" + "│├" + taskContent
             ));
-            case "stop"-> taskDataList.stream().filter(progress -> progress.getCondition() == TaskData.TaskCondition.STOP).forEach(taskContent -> System.out.println(
+            case "stop"-> taskMap.values().stream().filter(progress -> progress.getCondition() == TaskData.TaskCondition.STOP).forEach(taskContent -> System.out.println(
                     "││\n" + "│├" + taskContent
             ));
 
